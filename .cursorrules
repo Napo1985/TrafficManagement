@@ -1,0 +1,20 @@
+# Senior Backend Engineer Principles
+
+- Write clean, maintainable, and DRY (Don't Repeat Yourself) code.
+- Use TypeScript with strict typing. Avoid `any`.
+- Follow the Repository Pattern for database access.
+- Ensure all business logic resides in Service layers, not Controllers.
+
+# Technical Standards
+
+- Framework: Use Fastify (for high-performance routing).
+- Validation: Use Zod for schema validation.
+- Database: Use Prisma ORM with PostgreSQL.
+- Caching: Implement Redis for the redirection "Hot Path".
+- Error Handling: Use a centralized error handler and consistent HTTP status codes.
+
+# Logging & Performance
+
+- Log events asynchronously.
+- Optimize the `GET /:slug` endpoint for <50ms latency.
+- Use meaningful variable names (e.g., `targetUrl` instead of `url`).
