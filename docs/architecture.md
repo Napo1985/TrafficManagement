@@ -1,28 +1,33 @@
 # System Architecture
 
-## Folder Structure
+## Package layout (Spring Boot)
+
+Typical layout under `src/main/java/...`:
 
 ```
-/src
-  /api          # Routes and Controllers
-  /services     # Business logic (Slug generation, Analytics)
-  /repositories # Database abstraction (Prisma)
-  /cache        # Redis logic
-  /middlewares  # Validation, Bot detection, Error handling
-  /utils        # Helpers (Base62, URL validation)
-  /config       # Environment variables
+.../TrafficApplication.java          # @SpringBootApplication entry point
+.../api/ or .../web/                # REST controllers (thin)
+.../service/                        # Business logic (slug generation, redirect orchestration, async click handling)
+.../repository/                     # Spring Data JPA interfaces
+.../domain/ or .../model/           # JPA entities (Link, Click)
+.../config/                         # Redis, async (@EnableAsync), CORS, rate limiting beans
+.../web/ (filters, advice)          # Bot UA: OncePerRequestFilter; errors: @ControllerAdvice (or a dedicated security package)
 ```
 
-## Redirection Logic (The Hot Path)
+Spring idioms replace a separate “middlewares” folder: **filters** for cross-cutting request logic, **`@ControllerAdvice`** (or RFC 7807 `ProblemDetail`) for consistent API errors, and **services** for orchestration.
 
-1. Request hits `GET /:slug`.
-2. Middleware checks for bots.
-3. Service checks Redis for the slug.
-4. If not in Redis, fetch from PostgreSQL and prime Redis.
-5. Push click data to a background queue/task.
-6. Return 302 Redirect immediately.
+## Redirection logic (the hot path)
 
-## Database Schema (Prisma)
+1. Request hits **`GET /{slug}`** (Spring Web MVC handler).
+2. A **filter** (e.g. `OncePerRequestFilter`) detects bot user agents before heavy work.
+3. **Service** resolves the slug: check **Redis** first (Spring Data Redis / cache abstraction).
+4. On cache miss, load from **PostgreSQL** via a **repository**, then **prime Redis**.
+5. Enqueue or **@Async** persist **click** analytics so the redirect is not blocked.
+6. Return **302** immediately (`RedirectView` / `ResponseEntity` with `HttpStatus.FOUND`).
 
-- **Link:** `id` (UUID), `slug` (Unique), `targetUrl`, `source`, `createdAt`.
-- **Click:** `id` (UUID), `linkId` (FK), `timestamp`, `ip`, `userAgent`, `isBot`.
+## Persistence model (JPA entities)
+
+- **Link:** `id` (UUID), `slug` (unique), `targetUrl`, `source`, `createdAt`.
+- **Click:** `id` (UUID), `link` / `linkId` (FK to Link), `timestamp`, `ip`, `userAgent`, **`referrer`** (aligns with analytics in [requirements.md](requirements.md)), `isBot`.
+
+Flyway migrations own the physical schema; entities stay in sync with those scripts.

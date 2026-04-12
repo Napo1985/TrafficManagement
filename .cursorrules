@@ -1,20 +1,19 @@
 # Senior Backend Engineer Principles
 
 - Write clean, maintainable, and DRY (Don't Repeat Yourself) code.
-- Use TypeScript with strict typing. Avoid `any`.
-- Follow the Repository Pattern for database access.
-- Ensure all business logic resides in Service layers, not Controllers.
+- Use **Java** with strong typing; avoid raw types and unchecked generics unless justified; do not abuse `Object` where a concrete type or generic bound fits.
+- **Layered architecture:** controllers stay thin; **services** own business rules and orchestration; **repositories** handle persistence only.
 
 # Technical Standards
 
-- Framework: Use Fastify (for high-performance routing).
-- Validation: Use Zod for schema validation.
-- Database: Use Prisma ORM with PostgreSQL.
-- Caching: Implement Redis for the redirection "Hot Path".
-- Error Handling: Use a centralized error handler and consistent HTTP status codes.
+- Framework: **Spring Boot 3.x** (Web MVC for REST and redirects unless the project explicitly chooses WebFlux).
+- Validation: **Bean Validation** (`jakarta.validation`) on DTOs and appropriate domain boundaries.
+- Database: **Spring Data JPA** with **PostgreSQL**; **Flyway** for schema versioning.
+- Caching: **Redis** (Spring Data Redis) on the redirect hot path (slug → target URL).
+- Error handling: **`@ControllerAdvice`** (and optionally **RFC 7807** `ProblemDetail`) for consistent HTTP status codes and API error shape.
 
 # Logging & Performance
 
-- Log events asynchronously.
-- Optimize the `GET /:slug` endpoint for <50ms latency.
-- Use meaningful variable names (e.g., `targetUrl` instead of `url`).
+- Prefer **async** or non-blocking paths for logging and click persistence so redirects are not delayed (e.g. async appenders / `@Async` for click writes, per project conventions).
+- Optimize **`GET /{slug}`** for **<50ms** latency on the critical path.
+- Use meaningful names (e.g. `targetUrl` instead of `url`).
