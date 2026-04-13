@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.traffic.web.LinkFlowIntegrationTest
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.934 s -- in com.traffic.web.LinkFlowIntegrationTest
