@@ -1,2 +1,12 @@
+com\traffic\web\LinkController.class
+com\traffic\service\UrlSafety.class
+com\traffic\service\UrlValidationException.class
+com\traffic\service\LinkService.class
 com\traffic\TrafficApplication.class
+com\traffic\web\dto\CreateLinkResponse.class
 com\traffic\web\HealthController.class
+com\traffic\web\GlobalExceptionHandler.class
+com\traffic\web\RedirectController.class
+com\traffic\config\AppProperties.class
+com\traffic\web\dto\CreateLinkRequest.class
+com\traffic\service\SlugGenerationException.class

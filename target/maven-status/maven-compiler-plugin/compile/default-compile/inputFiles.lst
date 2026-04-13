@@ -1,2 +1,13 @@
+C:\Repos\TrafficManagement\src\main\java\com\traffic\config\AppProperties.java
+C:\Repos\TrafficManagement\src\main\java\com\traffic\config\PublicBaseUrlResolver.java
+C:\Repos\TrafficManagement\src\main\java\com\traffic\service\LinkService.java
+C:\Repos\TrafficManagement\src\main\java\com\traffic\service\SlugGenerationException.java
+C:\Repos\TrafficManagement\src\main\java\com\traffic\service\UrlSafety.java
+C:\Repos\TrafficManagement\src\main\java\com\traffic\service\UrlValidationException.java
 C:\Repos\TrafficManagement\src\main\java\com\traffic\TrafficApplication.java
+C:\Repos\TrafficManagement\src\main\java\com\traffic\web\dto\CreateLinkRequest.java
+C:\Repos\TrafficManagement\src\main\java\com\traffic\web\dto\CreateLinkResponse.java
+C:\Repos\TrafficManagement\src\main\java\com\traffic\web\GlobalExceptionHandler.java
 C:\Repos\TrafficManagement\src\main\java\com\traffic\web\HealthController.java
+C:\Repos\TrafficManagement\src\main\java\com\traffic\web\LinkController.java
+C:\Repos\TrafficManagement\src\main\java\com\traffic\web\RedirectController.java
