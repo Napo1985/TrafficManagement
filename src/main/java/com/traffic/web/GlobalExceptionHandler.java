@@ -1,6 +1,7 @@
 package com.traffic.web;
 
 import java.net.URI;
+import java.util.Objects;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
@@ -12,16 +13,24 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.traffic.service.SlugGenerationException;
 import com.traffic.service.UrlValidationException;
 
+/**
+ * JDK {@link URI} is not null-marked; Spring's {@link ProblemDetail#setType(URI)} expects {@code @NonNull URI}.
+ * {@code URI.create("about:blank")} never returns null.
+ */
+@SuppressWarnings("null")
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    private static final URI TYPE_VALIDATION = URI.create("about:blank");
+    private static URI problemDetailTypeUri() {
+        return URI.create("about:blank");
+    }
 
     @ExceptionHandler(UrlValidationException.class)
     public ResponseEntity<ProblemDetail> handleUrlValidation(UrlValidationException ex) {
-        ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        ProblemDetail detail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST, Objects.requireNonNullElse(ex.getMessage(), ""));
         detail.setTitle("Invalid URL");
-        detail.setType(TYPE_VALIDATION);
+        detail.setType(problemDetailTypeUri());
         return ResponseEntity.badRequest().body(detail);
     }
 
@@ -33,16 +42,16 @@ public class GlobalExceptionHandler {
                 .orElse("Invalid request");
         ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, message);
         detail.setTitle("Validation failed");
-        detail.setType(TYPE_VALIDATION);
+        detail.setType(problemDetailTypeUri());
         return ResponseEntity.badRequest().body(detail);
     }
 
     @ExceptionHandler(SlugGenerationException.class)
     public ResponseEntity<ProblemDetail> handleSlugGeneration(SlugGenerationException ex) {
-        ProblemDetail detail =
-                ProblemDetail.forStatusAndDetail(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
+        ProblemDetail detail = ProblemDetail.forStatusAndDetail(
+                HttpStatus.SERVICE_UNAVAILABLE, Objects.requireNonNullElse(ex.getMessage(), ""));
         detail.setTitle("Slug allocation failed");
-        detail.setType(TYPE_VALIDATION);
+        detail.setType(problemDetailTypeUri());
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(detail);
     }
 }

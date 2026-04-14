@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -35,7 +34,7 @@ class LinkFlowIntegrationTest {
     @Test
     void createThenRedirect_happyPath() throws Exception {
         MvcResult created = mockMvc.perform(post("/api/links")
-                        .contentType(MediaType.APPLICATION_JSON)
+                        .contentType("application/json")
                         .content(
                                 """
                                 {"targetUrl":"https://example.com/path?q=1","source":"test"}
@@ -63,7 +62,7 @@ class LinkFlowIntegrationTest {
     @Test
     void create_invalidUrl_returns400ProblemDetail() throws Exception {
         mockMvc.perform(post("/api/links")
-                        .contentType(MediaType.APPLICATION_JSON)
+                        .contentType("application/json")
                         .content("{\"targetUrl\":\"javascript:alert(1)\",\"source\":\"x\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.title").value("Invalid URL"))
@@ -78,7 +77,7 @@ class LinkFlowIntegrationTest {
     @Test
     void create_blankTarget_returns400() throws Exception {
         mockMvc.perform(post("/api/links")
-                        .contentType(MediaType.APPLICATION_JSON)
+                        .contentType("application/json")
                         .content("{\"targetUrl\":\"   \",\"source\":\"x\"}"))
                 .andExpect(status().isBadRequest());
     }
